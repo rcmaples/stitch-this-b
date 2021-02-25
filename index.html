@@ -90,14 +90,12 @@
         })
         console.log("You've been identified on ", document.location.href)
       }
-    </script>
 
-    <script>
-        window["_fs_ready"] = function () {
+      window["_fs_ready"] = function () {
         var sessionUrl = FS.getCurrentSessionURL();
         var el = document.getElementById("url");
         el.innerHTML = `<a href="${sessionUrl}">${sessionUrl}</a>`;
-        console.log("Recording has started.")
+        console.log("recording has started on ", document.location.href)
       };
     </script>
   </head>
