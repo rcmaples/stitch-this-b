@@ -14,16 +14,14 @@
       // Store a reference to the native method
       let open = XMLHttpRequest.prototype.open;
 
-      // Overwrite the native method
+      // Overwrite native method to catch call to /rec/page
       XMLHttpRequest.prototype.open = function() {
-        // Assign an event listener
         this.addEventListener("load", event => {
           if (event.currentTarget.responseURL == "https://rs.fullstory.com/rec/page"){
             FS.event("/rec/page has loaded")
             console.log("/rec/page has loaded")
           }
         }, false);
-        // Call the stored reference to the native method
         open.apply(this, arguments);
       };
     </script>
@@ -52,11 +50,14 @@
         o.crossOrigin = "anonymous";
         o.src = "https://" + _fs_script;
         y = n.getElementsByTagName(t)[0];
-        y.parentNode.insertBefore(o, y);
         g.identify = function(i, v, s) {
           g(l, { uid: i }, s);
           if (v) g(l, v, s);
         };
+        g.identify('84b4065e-69ac-4ca8-8a5f-1da15110f74e', {
+          displayName: "Twitchy Stitchers",
+          email: "twitchy@stitch.it"
+        })
         g.setUserVars = function(v, s) {
           g(l, v, s);
         };
@@ -88,6 +89,7 @@
         g.setVars = function(n, p) {
           g("setVars", [n, p]);
         };
+        y.parentNode.insertBefore(o, y);
         g._w = {};
         y = "XMLHttpRequest";
         g._w[y] = m[y];
@@ -98,16 +100,13 @@
             return g._w[y].apply(this, arguments);
           };
         g._v = "1.3.0";
+
       })(window, document, window["_fs_namespace"], "script", "user");
 
       var ref = document.referrer;
-      if (ref.includes("stitch-this-a")){
-        FS.identify('84b4065e-69ac-4ca8-8a5f-1da15110f74e', {
-          displayName: "Twitchy Stitchers",
-          email: "twitchy@stitch.it"
-        })
-        console.log("You've been identified on ", document.location.href)
-      }
+      // if (ref.includes("stitch-this-a")){
+      //   console.log("You've been identified on ", document.location.href)
+      // }
 
       window["_fs_ready"] = function () {
         var sessionUrl = FS.getCurrentSessionURL();
