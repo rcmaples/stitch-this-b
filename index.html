@@ -11,6 +11,24 @@
     <link rel="stylesheet" href="style.css" />
 
     <script>
+      // Store a reference to the native method
+      let open = XMLHttpRequest.prototype.open;
+
+      // Overwrite the native method
+      XMLHttpRequest.prototype.open = function() {
+        // Assign an event listener
+        this.addEventListener("load", event => {
+          if (event.currentTarget.responseURL == "https://rs.fullstory.com/rec/page"){
+            FS.event("/rec/page has loaded")
+            console.log("/rec/page has loaded")
+          }
+        }, false);
+        // Call the stored reference to the native method
+        open.apply(this, arguments);
+      };
+    </script>
+
+    <script>
       window["_fs_debug"] = false;
       window["_fs_host"] = "fullstory.com";
       window["_fs_script"] = "edge.fullstory.com/s/fs.js";
@@ -84,7 +102,7 @@
 
       var ref = document.referrer;
       if (ref.includes("stitch-this-a")){
-        FS.identify('de04d396-2e12-441a-95a0-37a9ecb87a17', {
+        FS.identify('84b4065e-69ac-4ca8-8a5f-1da15110f74e', {
           displayName: "Twitchy Stitchers",
           email: "twitchy@stitch.it"
         })
@@ -95,7 +113,7 @@
         var sessionUrl = FS.getCurrentSessionURL();
         var el = document.getElementById("url");
         el.innerHTML = `<a href="${sessionUrl}">${sessionUrl}</a>`;
-        console.log("recording has started on ", document.location.href)
+        console.log("FS is ready on ", document.location.href)
       };
     </script>
   </head>
