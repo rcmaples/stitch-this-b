@@ -11,9 +11,10 @@
     <link rel="stylesheet" href="style.css" />
 
     <script>
+
+      // Monkeypatch XHR requests to log out requests to /rec/page in the console.
       // Store a reference to the native method
       let open = XMLHttpRequest.prototype.open;
-
       // Overwrite native method to catch call to /rec/page
       XMLHttpRequest.prototype.open = function() {
         this.addEventListener("load", event => {
@@ -24,9 +25,8 @@
         }, false);
         open.apply(this, arguments);
       };
-    </script>
 
-    <script>
+      // MODIFIED FS snippet (pretty printed)
       window["_fs_debug"] = false;
       window["_fs_host"] = "fullstory.com";
       window["_fs_script"] = "edge.fullstory.com/s/fs.js";
@@ -50,18 +50,23 @@
         o.crossOrigin = "anonymous";
         o.src = "https://" + _fs_script;
         y = n.getElementsByTagName(t)[0];
+        // Move y.parentNode.insertBefore(o, y); to below g.setVars block.
         g.identify = function(i, v, s) {
           g(l, { uid: i }, s);
           if (v) g(l, v, s);
         };
+        // Because the user takes no action on site B to become identified,
+        // I've stored the document referrer in a var to see if it includes
+        // a URL fragment from site A.
+        // If it does, then call `g.identify(uid, {properties})` and log out to console for debugging
         var ref = document.referrer;
         if (ref.includes("stitch-this-a")){
-          g.identify('466c20d7-51ad-4786-b530-a745284ccfcf', {
+          g.identify('1c71460c-6a3e-4d86-8208-c1ce6663aed9', {
           displayName: "Twitchy Stitchers",
           email: "twitchy@stitch.it"
         })
           console.log("You've been identified on ", document.location.href)
-        }
+        } // end custom identify block.
 
         g.setUserVars = function(v, s) {
           g(l, v, s);
@@ -94,7 +99,7 @@
         g.setVars = function(n, p) {
           g("setVars", [n, p]);
         };
-        y.parentNode.insertBefore(o, y);
+        y.parentNode.insertBefore(o, y); // moved from above.
         g._w = {};
         y = "XMLHttpRequest";
         g._w[y] = m[y];
@@ -108,6 +113,7 @@
 
       })(window, document, window["_fs_namespace"], "script", "user");
 
+      // FS ready callback to print session URL to HTML and log to console.
       window["_fs_ready"] = function () {
         var sessionUrl = FS.getCurrentSessionURL();
         var el = document.getElementById("url");
