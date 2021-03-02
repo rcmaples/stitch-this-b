@@ -57,19 +57,6 @@
           g(l, { uid: i }, s);
           if (v) g(l, v, s);
         };
-        // Because the user takes no action on site B to become identified,
-        // I've stored the document referrer in a var to see if it includes
-        // a URL fragment from site A.
-        // If it does, then call `g.identify(uid, {properties})` and log out to console for debugging
-        var ref = document.referrer;
-        if (ref.includes("stitch-this-a")){
-          g.identify('1c71460c-6a3e-4d86-8208-c1ce6663aed9', {
-          displayName: "Twitchy Stitchers",
-          email: "twitchy@stitch.it"
-        })
-          console.log("You've been identified on ", document.location.href)
-        } // end custom identify block.
-
         g.setUserVars = function(v, s) {
           g(l, v, s);
         };
@@ -114,6 +101,16 @@
         g._v = "1.3.0";
 
       })(window, document, window["_fs_namespace"], "script", "user");
+
+
+        var ref = document.referrer;
+        if (ref.includes("stitch-this-a")){
+          FS.identify('1c71460c-6a3e-4d86-8208-c1ce6663aed9', {
+          displayName: "Twitchy Stitchers",
+          email: "twitchy@stitch.it"
+        })
+          console.log("You've been identified on ", document.location.href)
+        } // end custom identify block.
 
       // FS ready callback to print session URL to HTML and log to console.
       window["_fs_ready"] = function () {
